@@ -1,6 +1,6 @@
 #!/usr/bin/env ansible-playbook
 
-- name: install joomla
+- name: install slefhosted stack
   hosts: selfhosted
   become: true
 
