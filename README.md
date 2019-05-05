@@ -4,11 +4,14 @@ The following Apps are implemended:
 
 - Nextcloud + Collabora + Talk
 - Joomla
+- Wordpress
 - Bookstack
 - Grav
 - Rocket.Chat
 - Wallabag
-- 
+- Portainer
+- Adminer
+- restic & rclone Backup
 
 Right now this will run on Ubuntu 16/18, Debian 9, CentOS 7, Amazon Linux 2.
 
@@ -162,6 +165,10 @@ This a list of all available apps:
   - name: joomla
     type: joomla
     server_fqdn: joomla.{{ base_domain }}
+
+  - name: wordpress
+    type: wordpress
+    server_fqdn: wordpress.{{ base_domain }}
 
   - name: bookstack
     type: bookstack

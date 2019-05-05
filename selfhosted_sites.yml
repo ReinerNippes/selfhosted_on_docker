@@ -48,6 +48,10 @@ selfhosted_sites:
     type: joomla
     server_fqdn: joomla.{{ base_domain }}
 
+  - name: wordpress
+    type: wordpress
+    server_fqdn: wordpress.{{ base_domain }}
+
   - name: bookstack
     type: bookstack
     server_fqdn: bookstack.{{ base_domain }}
