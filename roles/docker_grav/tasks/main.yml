@@ -1,0 +1,21 @@
+--- 
+# tasks file for docker_grav 
+# start all needed grav container 
+ 
+- name: '{{ app_name }} | include vars'
+  include_vars: "{{ item }}" 
+  loop: 
+    - group_vars/grav.yml 
+ 
+- name: '{{ app_name }} | include directory structure'
+  include_tasks: directory_structure.yml 
+ 
+- name: '{{ app_name }} | grav network'
+  include_tasks: network.yml 
+ 
+- name: '{{ app_name }} | docker grav'
+  include_tasks: grav.yml 
+ 
+- name: '{{ app_name }} | backup grav'
+  include_tasks: tasks/backup_script.yml 
+  when: backup_enabled 

@@ -1,0 +1,14 @@
+---
+# Grav varibales
+
+app_server_fqdn:         '{{ grav_server_fqdn }}'
+
+# docker image version
+app_docker_image:        'latest'
+
+# Enable/disable auto container updates via watchtower
+app_watchtower:          'true'
+
+# data dir
+app_base_dir:            '{{ selfhosted_base_dir }}/{{ app_name }}'
+app_data_dir:            '{{ app_base_dir }}/data'

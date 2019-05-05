@@ -1,0 +1,15 @@
+---
+# tasks file to start redis container
+
+- name: '{{ app_name }} | Create redis container'
+  docker_container:
+    name:           '{{ app_name }}-redis'
+    image:          redis:{{ docker_nextcloud_redis_image | default('latest') }}
+    restart_policy: 'unless-stopped'
+    command:        redis-server --requirepass {{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_redis_secret chars=ascii_letters,digits length=32') }}
+    networks:       [ name: '{{ app_name }}' ]
+    purge_networks: true
+    volumes:        '{{ app_name }}-redis-vol:/data:rw'
+    labels:
+      com.centurylinklabs.watchtower.enable:         '{{ app_redis_watchtower }}'
+    state:          'started'

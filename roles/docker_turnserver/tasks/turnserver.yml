@@ -1,0 +1,35 @@
+---
+# tasks file to start turnserver container
+
+- name:             'Create the turnserver container'
+  docker_container:
+    name:           '{{ app_name}}-turnserver'
+    image:          'instrumentisto/coturn:{{ docker_turnserver_image | default("latest") }}'
+    restart_policy: 'unless-stopped'
+    command: >
+      -n
+      --log-file=stdout
+      --external-ip=$(detect-external-ip)
+      --tls-listening-port=5349
+      --fingerprint
+      --use-auth-secret
+      --static-auth-secret={{ lookup('password', '{{ selfhosted_credential_store }}/talk_secret chars=ascii_letters,digits length=32') | lower }}
+      --realm={{ app_server_fqdn }}
+      --total-quota=100
+      --bps-capacity=0
+      --stale-nonce
+      --no-multicast-peers
+      --no-cli
+      --no-tlsv1
+      --no-tlsv1_1
+      --listening-ip={{ ansible_default_ipv4.address }}
+      --relay-ip={{ ansible_default_ipv4.address }}
+      --cert=/etc/ssl/nextcloud/ssl/{{ app_server_fqdn }}.crt
+      --pkey=/etc/ssl/nextcloud/ssl/{{ app_server_fqdn }}.key
+      --cipher-list="ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AES:RSA+3DES:!ADH:!AECDH:!MD5"
+    network_mode: host
+    volumes:
+      - '{{ traefik_config_dir }}:/etc/ssl/nextcloud:ro'
+      - '{{ app_name}}-turnserver-vol:/var/lib/coturn:rw'
+    labels:
+      com.centurylinklabs.watchtower.enable: '{{ app_turnserver_watchtower }}'

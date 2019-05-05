@@ -1,0 +1,64 @@
+---
+# Nextcloud variables
+
+app_collabora_fqdn:                '{{ collabora_server_fqdn }}'
+app_onlyoffice_fqdn:               '{{ onlyoffice_server_fqdn }}'
+
+# docker image version
+docker_nextcloud_image:           'fpm-alpine'
+
+docker_nextcloud_postgres_image:  '{{ docker_default_postgres_image }}'
+docker_nextcloud_mysql_image:     '{{ docker_default_mysql_image }}'
+docker_nextcloud_nginx_image:     '{{ docker_default_nginx_image }}'
+docker_nextcloud_redis_image:     '{{ docker_default_redis_image }}'
+docker_turnserver_image:          'latest'
+
+# Enable/disable auto container updates via watchtower
+app_watchtower:                   'false'
+app_db_watchtower:                'false'
+app_nginx_watchtower:             'false'
+app_redis_watchtower:             'false'
+app_collabora_watchtower:         'false'
+app_turnserver_watchtower:        'false'
+
+# data dir
+app_base_dir:                     '{{ selfhosted_base_dir }}/{{ app_name }}'
+app_data_dir:                     '{{ app_base_dir }}/data'
+app_www_dir:                      '{{ app_base_dir }}/www'
+app_config_dir:                   '{{ app_base_dir }}/config'
+app_datadump_dir:                 '{{ app_base_dir }}/database_dump'
+
+app_container_data_dir:           '/var/nc-data'
+
+# admin user
+app_admin:                        'admin'
+app_passwd:                       ''              # leave empty to generate random password stored in /{{ selfhosted_base_dir }}/secrets
+
+# collabora admin user
+app_collabora_admin:              'admin'
+app_collabora_passwd:             ''              # leave empty to generate random password stored in /{{ selfhosted_base_dir }}/secrets
+
+# database settings (choose one)
+app_db_type:                      'pgsql'        # (PostgreSQL)
+# app_db_type:                    'mysql'        # (MariaDB)
+# app_db_type:                    'sqlite'        # (SQLite)
+
+# options for mariadb or postgres
+app_db_name:                      'nextcloud'
+app_db_user:                      'nextcloud'
+app_db_passwd:                    ''              # leave empty to generate random password stored in /{{ selfhosted_base_dir }}/secrets
+app_db_prefix:                    'oc_'
+
+# Nextcloud mail setup
+app_configure_mail:               true
+app_mail_from:                    ''
+app_mail_domain:                  ''
+app_mail_smtpmode:                'smtp'
+app_mail_smtpauthtype:            ''
+app_mail_smtpsecure:              ''
+app_mail_smtpauth:                '0'
+app_mail_smtphost:                'mail-relay'
+app_mail_smtpport:                '25'
+app_mail_smtpname:                ''
+app_mail_smtppwd:                 ''
+

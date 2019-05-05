@@ -1,0 +1,57 @@
+---
+# tasks file for docker_base
+# start all needed base container
+
+- name: include vars
+  include_vars: "{{ item }}"
+  loop:
+    - group_vars/base.yml
+    - group_vars/portainer.yml
+    - group_vars/traefik.yml
+    - group_vars/restic.yml
+    - group_vars/mailrelay.yml
+
+- name: open ufw firewall
+  include_role:
+    name: prep_ufw
+  when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
+
+- name: open firewalld
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  with_items:
+    - 22/tcp
+    - 80/tcp
+    - 443/tcp
+  when: ansible_os_family == "RedHat" 
+
+- name: include directory structure
+  include_tasks: directory_structure.yml
+
+- name: docker network
+  include_tasks: network.yml
+
+- name: docker watchtower
+  include_tasks: watchtower.yml
+
+- name: docker traefik
+  include_tasks: traefik.yml
+
+- name: docker portainer
+  include_tasks: portainer.yml
+  when: 
+    - portainer_enabled
+
+- name: docker adminer
+  include_tasks: adminer.yml
+  when: 
+    - adminer_enabled
+    - nextcloud_db_type != 'sqlite'
+
+- name: docker postfix mail relay
+  include_tasks: mailrelay.yml
+  when: 
+    - mailrelay_enabled

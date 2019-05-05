@@ -1,0 +1,100 @@
+---
+# tasks file for docker_wallabag
+
+- name: mysql container
+  block:
+    - name: create mysql group
+      group:
+        name: mysql
+        
+    - name: create mysql user
+      user:
+        name: mysql
+        group: mysql
+        system: true
+        home: "{{ selfhosted_base_dir }}"
+        create_home: false
+        shell: /bin/false
+        comment: mysql administrator
+        state: present
+
+    - name: create data directory
+      file:
+        name: "{{ app_database_dir }}"
+        owner: mysql
+        group: mysql
+        mode: 0700
+        state: directory
+
+    - name: "Create mysql container"
+      docker_container:
+        name: "{{ app_name }}-db"
+        image: mariadb:{{ app_docker_mysql_image | default('latest') }}
+        restart_policy: always
+        user: mysql:mysql
+        tty: yes
+        env:
+            MYSQL_DATABASE:      "{{ app_db_name  }}"
+            MYSQL_USER:          "{{ app_db_user }}"
+            MYSQL_PASSWORD:      "{{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_database_user_secret chars=ascii_letters,digits length=32') }}"
+            MYSQL_ROOT_PASSWORD: "{{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_mysql_root_secret chars=ascii_letters,digits length=32') }}"
+        volumes: 
+          - "{{ app_database_dir }}:/var/lib/mysql"
+        networks:
+          - name: "{{ app_name }}"
+        labels:
+          com.centurylinklabs.watchtower.enable: "{{ app_db_watchtower }}"
+  when: app_db_type == 'mysql'
+
+- name: postgres container
+  block: 
+    - name: create postgres group
+      group:
+        name: postgres
+        gid:  70
+    
+    - name: create postgres user
+      user:
+        name: postgres
+        uid:  70
+        group: postgres
+        system: true
+        home: "{{ selfhosted_base_dir }}"
+        create_home: false
+        shell: /bin/false
+        comment: PostgreSQL administrator
+        state: present
+        
+    - name: create data directory
+      file:
+        name: "{{ app_database_dir }}"
+        owner: postgres
+        group: postgres
+        mode: 0700
+        state: directory
+    
+    - name: "Create postgres container"
+      docker_container:
+        name: "{{ app_name }}-db"
+        image: postgres:{{ app_docker_postgres_image | default('latest') }}
+        restart_policy: always
+        user: postgres:postgres
+        tty: yes
+        env:
+            POSTGRES_DB:          '{{ app_db_name }}'
+            POSTGRES_USER:        '{{ app_db_user }}'
+            POSTGRES_PASSWORD:    "{{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_database_user_secret chars=ascii_letters,digits length=32') }}"
+            PGDATA:               '/var/lib/postgresql/data'
+            POSTGRES_INITDB_ARGS: '{{ app_database_initdb_args }}'
+        volumes: 
+          - '{{ app_database_dir }}:/var/lib/postgresql/data:rw'
+        networks:
+          - name: "{{ app_name }}"
+        labels:
+          com.centurylinklabs.watchtower.enable:         "{{ app_db_watchtower }}"
+
+    - name: wait for {{ app_name }}-db to come up
+      wait_for:
+        delay: 3
+        path: "{{ app_database_dir }}/global"
+  when: app_db_type == 'pgsql'

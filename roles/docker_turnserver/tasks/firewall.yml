@@ -1,0 +1,21 @@
+---
+
+- name: '{{ app_name }} | open ufw firewall'
+  include_role:
+    name: prep_ufw
+  vars:
+    ufw_rules: 
+      - { port: '5349', proto: 'tcp', rule: 'allow' }
+      - { port: '5349', proto: 'udp', rule: 'allow' }
+  when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
+
+- name: '{{ app_name }} | open firewalld'
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  with_items:
+    - 5349/tcp
+    - 5349/udp
+  when: ansible_os_family == "RedHat" 

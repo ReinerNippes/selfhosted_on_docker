@@ -1,0 +1,66 @@
+---
+
+# Define your selfhosted sites here
+
+base_domain: selfhosted.example.tld
+
+# Your email adresse for letsencrypt
+ssl_cert_email: selfhosted@.example.tld
+
+# set this to true if you want to enable a postfix mail relay for all your selfhosted services
+# edit group_vars/mail_relay.yml to set user/password for your upstream mail server
+mailrelay_enabled: true
+
+# your maildomain
+selfhosted_mail_domain: '{{ base_domain }}'
+
+# Enable to backup your server 
+backup_enabled: false
+
+# adminer is a webfront end for your database at https://{{ base_domain }}/adminer
+adminer_enabled: false
+
+# portainer is a webfront end for docker host at https://{{ base_domain }}/portainer/
+portainer_enabled: true
+
+# user for traefik dashboard at https://{{ base_domain }}/traefik
+traefik_api_enabled: false
+
+
+selfhosted_sites:
+  - name: base
+    type: base
+    server_fqdn: base.{{ base_domain }}
+
+  - name: talk
+    type: turnserver
+    server_fqdn: base.{{ base_domain }}
+
+  - name: nextcloud
+    type: nextcloud
+    server_fqdn: nextcloud.{{ base_domain }}
+    collabora:   true
+    collabora_dictionaries: "de_DE en_GB en_US es_ES fr_FR it nl pt_BR pt_PT ru"
+    talk:        true
+    talk_server: base.{{ base_domain }}
+
+  - name: joomla
+    type: joomla
+    server_fqdn: joomla.{{ base_domain }}
+
+  - name: bookstack
+    type: bookstack
+    server_fqdn: bookstack.{{ base_domain }}
+
+  - name: grav
+    type: grav
+    server_fqdn: grav.{{ base_domain }}
+
+  - name: rocketchat
+    type: rocketchat
+    server_fqdn: rocketchat.{{ base_domain }}
+    
+  - name: wallabag
+    type: wallabag
+    server_fqdn: wallabag.{{ base_domain }}
+    

@@ -1,0 +1,47 @@
+---
+# tasks file to start nginx container
+
+- name: '{{ app_name }} | copy nginx.conf to {{ app_config_dir }}'
+  template:
+    src:  "{{ item }}"
+    dest: "{{ app_config_dir }}/{{ item }}"
+    owner: 82
+    group: 82
+    mode: 0640
+  loop:
+    - 'nginx.conf'
+
+- name: '{{ app_name }} | Create the nginx container'
+  docker_container:
+    name: "{{ app_name }}-nginx"
+    image: nginx:{{ app_nginx_image | default('latest') }}
+    restart_policy: always
+    networks:
+      - name: "{{ app_name }}"
+    purge_networks: true
+    links:
+      - "{{ app_name }}:joomla"
+    volumes:
+      - "{{ app_config_dir }}/nginx.conf:/etc/nginx/nginx.conf"
+      - "{{ app_data_dir }}:/var/www/html"
+    volumes_from:
+      - "{{ app_name }}"
+    labels:
+      traefik.docker.network: "frontend"
+      traefik.enable:         "true"
+      traefik.frontend.rule:  "Host:{{ app_server_fqdn }}"
+      traefik.port:           "80"
+      traefik.protocol:       "http"
+      traefik.frontend.headers.referrerPolicy:          "no-referrer"
+      traefik.frontend.headers.SSLRedirect:             "true"
+      traefik.frontend.headers.STSSeconds:              "315360000"
+      traefik.frontend.headers.browserXSSFilter:        "true"
+      traefik.frontend.headers.contentTypeNosniff:      "true"
+      traefik.frontend.headers.forceSTSHeader:          "true"
+      traefik.frontend.headers.STSIncludeSubdomains:    "true"
+      traefik.frontend.headers.STSPreload:              "true"
+      traefik.frontend.headers.customFrameOptionsValue: "SAMEORIGIN"
+      traefik.frontend.redirect.permanent:              "true"
+      com.centurylinklabs.watchtower.enable:            '{{ app_nginx_watchtower }}'
+    state: 'started'
+  register: docker_result

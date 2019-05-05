@@ -1,0 +1,24 @@
+---
+# tasks file for docker_wallabag
+# start all needed wallabag container
+
+- name: include vars
+  include_vars: "{{ item }}"
+  loop:
+    - group_vars/wallabag.yml
+
+- name: include directory structure
+  include_tasks: directory_structure.yml
+
+- name: wallabag network
+  include_tasks: network.yml
+
+- name: docker database
+  include_tasks: create_app_{{ app_db_type }}_container.yml
+
+- name: docker wallabag
+  include_tasks: wallabag.yml
+
+- name: backup nextcloud
+  include_tasks: tasks/backup_script.yml
+  when: backup_enabled

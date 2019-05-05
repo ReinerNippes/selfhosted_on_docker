@@ -1,0 +1,16 @@
+---
+# Turnserver variables
+
+app_server_fqdn:                  '{{ base_server_fqdn }}'
+
+# docker image version
+docker_turnserver_image:          'latest'
+
+# Enable/disable auto container updates via watchtower
+app_turnserver_watchtower:        'true'
+
+# database settings (choose one)
+app_db_type:                      'pgsql'        # (PostgreSQL)
+# app_db_type:                    'mysql'        # (MariaDB)
+# app_db_type:                   'sqlite'        # (SQLite)
+

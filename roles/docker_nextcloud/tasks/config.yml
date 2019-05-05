@@ -1,0 +1,108 @@
+---
+# tasks file for docker_nextcloud\config.yml
+# config nextcloud ready to login
+
+- name: '{{ app_name }} | generate admin passwd if app_passwd is empty'
+  set_fact:
+    app_passwd: "{{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_admin_secret chars=ascii_letters,digits length=32') }}"
+  when: app_passwd == ''
+
+- name: '{{ app_name }} | first setup nextcloud'
+  shell: >
+    docker exec --user www-data {{ app_name }} php occ  maintenance:install 
+    --database {{ app_db_type }} --database-host {{ app_name }}-db --database-name {{ app_db_name }} 
+    --database-table-prefix {{ app_db_prefix }} --database-user {{ app_db_user }} 
+    --database-pass {{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_db_user_secret chars=ascii_letters,digits length=32') }} 
+    --admin-user {{ app_admin }} --admin-pass {{ app_passwd }} --data-dir {{ app_container_data_dir }}
+  args:
+    creates: "{{ app_config_dir }}/config.php"
+  register: first_setup_nextcloud
+
+- name: '{{ app_name }} | set nextcloud system config.php values'
+  shell: docker exec --user www-data {{ app_name }} php occ config:system:set {{ item }}
+  loop: "{{ nextcloud_system_config }}"
+  when: ( first_setup_nextcloud is changed ) or ( force_nextcloud_config )
+
+- name: '{{ app_name }} | set nextcloud mail config.php values'
+  shell: docker exec --user www-data {{ app_name }} php occ config:system:set {{ item }}
+  loop: "{{ nextccloud_mail_config }}"
+  when: (( first_setup_nextcloud is changed ) or force_nextcloud_config ) and app_configure_mail
+
+- name: '{{ app_name }} | set nextcloud app settings'
+  shell: docker exec --user www-data {{ app_name }} php occ app:{{ item }}
+  loop: "{{ nextcloud_app_config }}"
+  when: ( first_setup_nextcloud is changed ) or ( force_nextcloud_config )
+
+- name: '{{ app_name }} | backup jobs, upgrade apps and database tuning'
+  shell: docker exec --user www-data {{ app_name }} php occ {{ item }}
+  loop:
+    - background:cron
+    - upgrade
+    - db:add-missing-indices
+    - db:convert-filecache-bigint
+  when: ( first_setup_nextcloud is changed ) or ( force_nextcloud_config )
+
+- name: '{{ app_name }} | create optimize batch job {{ app_name }}'
+  copy:
+    dest: /usr/local/bin/{{ app_name }}_optimize.sh
+    owner: root
+    group: root
+    mode: 0750
+    content: |
+      #!/bin/bash
+      docker exec {{ app_name }}-redis redis-cli -a {{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_redis_secret chars=ascii_letters,digits length=32') }} FLUSHALL
+      docker exec --user www-data {{ app_name }} php occ files:scan --all
+      docker exec --user www-data {{ app_name }} php occ files:scan-app-data
+      exit 0
+      
+- name: '{{ app_name }} | optimze cronjob'
+  cron:
+    name: '{{ app_name }} optimize'
+    minute: '15'
+    hour:   '01'
+    user: root
+    job: "/usr/local/bin/{{ app_name }}_optimize.sh > /dev/null 2>&1"
+
+- name: '{{ app_name }} | php cronjob'
+  cron:
+    name: '{{ app_name }} php cronjob'
+    minute: '*/15'
+    user: root
+    job: "docker exec --user www-data {{ app_name }} php -f cron.php > /dev/null 2>&1"
+
+- name: '{{ app_name }} | run php cronjob once'
+  shell: docker exec --user www-data {{ app_name }} php -f cron.php
+  
+- name: '{{ app_name }} | setup collabora app'
+  block:
+  - name: '{{ app_name }} | install collabora app'
+    shell: docker exec --user www-data {{ app_name }} php occ app:install richdocuments
+    args:
+      creates: '{{ app_www_dir }}/apps/richdocuments'
+    register: collabora_app_installed
+
+  - name: '{{ app_name }} | enable collabora app'
+    shell: docker exec --user www-data {{ app_name }} php occ app:enable richdocuments
+    when: collabora_app_installed is changed
+    
+  - name: '{{ app_name }} | set collabora wopi url'
+    shell: docker exec --user www-data {{ app_name }} php occ config:app:set richdocuments wopi_url --value https://{{ app_server_fqdn }}:443
+    when: collabora_app_installed is changed
+  when: site_item.collabora
+
+- name: '{{ app_name }} | setup talk app'
+  block:
+  - name: install talk app
+    shell: 'docker exec --user www-data {{ app_name }} php occ app:install spreed'
+    args:
+      creates: '{{ app_www_dir }}/apps/spreed'
+    register: talk_app_installed
+
+  - name: '{{ app_name }} | configure talk app'
+    shell: 'docker exec --user www-data {{ app_name }} php occ {{ item }}'
+    loop:
+      - app:enable spreed
+      - config:app:set spreed stun_servers --value '["{{ site_item.talk_server }}:5349"]'
+      - config:app:set spreed turn_servers --value '[{"server":"{{ site_item.talk_server }}:5349","secret":"{{ lookup('password', '{{ selfhosted_credential_store }}/talk_secret chars=ascii_letters,digits length=32') | lower }}","protocols":"udp,tcp"}]'
+    when: talk_app_installed is changed
+  when: site_item.talk

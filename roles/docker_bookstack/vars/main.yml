@@ -1,0 +1,52 @@
+---
+# vars file for docker_bookstack
+
+app_name:  bookstack
+
+network_base_container:
+      - traefik
+      - '{{ "adminer" if adminer_enabled else "traefik" }}'
+      - mail-relay
+
+app_docker_env:
+  DB_DATABASE:       '{{ app_db_name }}'
+  DB_USER:           '{{ app_db_user }}'
+  DB_PASSWORD:       '{{ lookup("password", "{{ selfhosted_credential_store }}/{{ app_name }}_database_user_secret chars=ascii_letters,digits length=32") }}'
+  DB_HOST:           '{{ app_name }}-db'
+  MAIL_HOST:         'mail-relay'
+  MAIL_PORT:         '25'
+  MAIL_FROM:         '{{ ssl_cert_email }}'
+  APP_URL:           'https://{{ app_server_fqdn }}'
+
+app_docker_vol:
+  - '{{ app_data_dir }}:/config'
+
+app_docker_labels:
+      traefik.docker.network:                        'frontend'
+      traefik.enable:                                'true'
+      traefik.frontend.rule:                         'Host:{{ app_server_fqdn }}'
+      traefik.port:                                  '80'
+      traefik.protocol:                              'http'
+      traefik.frontend.headers.referrerPolicy:       'no-referrer'
+      traefik.frontend.headers.SSLRedirect:          'true'
+      traefik.frontend.headers.STSSeconds:           '315360000'
+      traefik.frontend.headers.browserXSSFilter:     'true'
+      traefik.frontend.headers.contentTypeNosniff:   'true'
+      traefik.frontend.headers.forceSTSHeader:       'true'
+      traefik.frontend.headers.STSIncludeSubdomains: 'true'
+      traefik.frontend.headers.STSPreload:           'true'
+      traefik.frontend.headers.frameDeny:            'true'
+      com.centurylinklabs.watchtower.enable:         '{{ app_watchtower }}'
+
+backup_script_block: |
+    #
+    # backup the database
+    {% if app_db_type == 'mysql' %}
+    sudo docker exec {{ app_name }}-db mysqldump --single-transaction -h localhost -u {{ app_db_user }} -p{{ lookup("password", "{{ selfhosted_credential_store }}/{{ app_name }}_database_user_secret chars=ascii_letters,digits length=32") }} {{ app_db_name }} > {{ app_datadump_dir }}/db_dump_{{ app_db_type }}_{{ app_name }}.sql
+    {% elif app_db_type == 'pgsql' %}
+    sudo docker exec {{ app_name }}-db pg_dump -c -U {{ app_db_user }} {{ app_db_name }} > {{ app_datadump_dir }}/db_dump_{{ app_db_type }}_{{ app_name }}.sql
+    {% endif %}
+    
+    # backup the data dir
+    {{ restic_install_path }}/restic backup {{ app_data_dir }} {{ app_datadump_dir }}
+    #

@@ -1,0 +1,13 @@
+---
+# Some common variables used in more then one roles
+
+docker_adminer_image:               'latest'
+docker_traefik_image:               'alpine'
+docker_watchtower_image:            'latest'
+docker_watchtower_certdumper_image: 'latest'
+
+watchtower_adminer:                 'true'
+watchtower_traefik:                 'true'
+watchtower_certdumper_traefik:      'true'
+#watchtower_watchtower:    'true'
+

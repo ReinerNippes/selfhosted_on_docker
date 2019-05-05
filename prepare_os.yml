@@ -1,0 +1,10 @@
+#!/usr/bin/env ansible-playbook
+
+- name: install os and docker
+  hosts: selfhosted
+  become: true
+
+  roles:
+    - prepare_os
+    - prepare_docker
+    

@@ -1,0 +1,28 @@
+#!/usr/bin/env ansible-playbook
+
+- name: install joomla
+  hosts: selfhosted
+  become: true
+
+  tasks:
+  - name: load site definition 
+    include_vars: 
+      file: '{{ playbook_dir }}/selfhosted_sites.yml'
+    delegate_to: localhost
+    connection: local
+
+  - name: prepare backup
+    include_role:
+      name: prepare_backup
+    when: backup_enabled
+
+  - name: setup all sites
+    include_role:
+      name: docker_{{ site_item.type }}
+    vars:
+      - app_name:        '{{ site_item.name }}'
+      - app_server_fqdn: '{{ site_item.server_fqdn }}'
+    loop: '{{ selfhosted_sites }}'
+    loop_control:
+      loop_var: site_item
+

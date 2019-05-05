@@ -1,0 +1,7 @@
+---
+# tasks file to create docker frontend network
+
+- name: 'Create frontend network'
+  docker_network:
+    name:  'frontend'
+    state: 'present'

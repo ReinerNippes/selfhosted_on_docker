@@ -1,0 +1,24 @@
+---
+# tasks file for docker_bookstack
+# start all needed bookstack container
+
+- name: '{{ app_name }} | include vars'
+  include_vars: "{{ item }}"
+  loop:
+    - group_vars/bookstack.yml
+
+- name: '{{ app_name }} | include directory structure'
+  include_tasks: directory_structure.yml
+
+- name: '{{ app_name }} | bookstack network'
+  include_tasks: network.yml
+
+- name: '{{ app_name }} | docker database'
+  include_tasks: create_app_{{ app_db_type }}_container.yml
+
+- name: '{{ app_name }} | docker bookstack'
+  include_tasks: bookstack.yml
+
+- name: '{{ app_name }} | backup bookstack'
+  include_tasks: tasks/backup_script.yml
+  when: backup_enabled

@@ -1,0 +1,9 @@
+---
+# Portainer varibales
+
+# admin user password
+# leave empty to generate random password
+portainer_passwd:     ''
+
+portainer_data_dir:   'portainer-data-vol'
+

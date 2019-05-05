@@ -1,0 +1,55 @@
+---
+# vars file for docker_container
+
+app_name:  nextcloud
+
+nextcloud_traefik_label:
+  nginx:
+    traefik.enable:                        "false"
+    com.centurylinklabs.watchtower.enable: "true"
+  apache:
+    traefik.docker.network: "frontend"
+    traefik.enable:         "true"
+    traefik.frontend.rule:  "Host:{{ app_server_fqdn }}"
+    traefik.port:           "80"
+    traefik.protocol:       "http"
+    traefik.frontend.headers.referrerPolicy:          "no-referrer"
+    traefik.frontend.headers.SSLRedirect:             "true"
+    traefik.frontend.headers.STSSeconds:              "315360000"
+    traefik.frontend.headers.browserXSSFilter:        "true"
+    traefik.frontend.headers.contentTypeNosniff:      "true"
+    traefik.frontend.headers.forceSTSHeader:          "true"
+    traefik.frontend.headers.STSIncludeSubdomains:    "true"
+    traefik.frontend.headers.STSPreload:              "true"
+    traefik.frontend.headers.customFrameOptionsValue: "SAMEORIGIN"
+    com.centurylinklabs.watchtower.enable:            "true"
+
+network_base_container:
+      - traefik
+      - '{{ "adminer" if adminer_enabled else "traefik" }}'
+      - mail-relay
+
+backup_script_block: |
+    #    #
+    # Make sure nextcloud is enabled when we are done
+    trap "sudo docker exec -u www-data {{ app_name }} php occ maintenance:mode --off" EXIT
+    
+    # set nextcloud to maintenance mode
+    sudo docker exec -u www-data {{ app_name }} php occ maintenance:mode --on
+    
+    # backup the database
+    {% if app_db_type == 'mysql' %}
+    sudo docker exec {{ app_name }}-db mysqldump --single-transaction -h localhost -u {{ app_db_user }} -p{{ app_db_passwd }} {{ app_db_name }} > {{ app_datadump_dir }}/db_dump_{{ app_db_type }}_nextcloud.sql
+    {% elif app_db_type == 'pgsql' %}
+    sudo docker exec {{ app_name }}-db pg_dump -c -U {{ app_db_user }} {{ app_db_name }} > {{ app_datadump_dir }}/db_dump_{{ app_db_type }}_nextcloud.sql
+    {% endif %}
+    
+    # backup the data dir
+    {{ restic_install_path }}/restic backup {{ app_data_dir }} {{ app_config_dir }} {{ app_datadump_dir }}
+    
+    # turn maintenance mode off
+    sudo docker exec -u www-data {{ app_name }} php occ maintenance:mode  --off
+    
+    # delete trap
+    trap "" EXIT
+    #

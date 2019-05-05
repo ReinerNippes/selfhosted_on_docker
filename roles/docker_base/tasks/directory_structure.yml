@@ -1,0 +1,40 @@
+---
+# create all base diretories
+
+- name: make sure {{ selfhosted_base_dir }} is present
+  file:
+    name: "{{ selfhosted_base_dir }}"
+    owner: "{{ ansible_env.SUDO_USER | default('root') }}"
+    group: "{{ ansible_env.SUDO_USER | default('root') }}"
+    state: directory
+
+- name: make sure {{ selfhosted_credential_store }} is present
+  file: 
+    name: '{{ selfhosted_credential_store }}'
+    owner: "{{ ansible_env.SUDO_USER | default('root') }}"
+    group: "{{ ansible_env.SUDO_USER | default('root') }}"
+    mode:  0700
+    state: directory
+
+- name: make sure {{ traefik_config_dir }} is present
+  file:
+    name:  "{{ traefik_config_dir }}"
+    mode:  0750
+    owner: root
+    group: "{{ ansible_env.SUDO_USER | default('root') }}"
+    state: directory
+
+- name: make sure postfix directories are present
+  file:
+    name:  "{{ item }}"
+    mode:  0750
+    owner: 101
+    group: 102
+    state: directory
+  loop:
+    - '{{ mail_relay_lib_postfix_dir }}'
+    - '{{ mail_relay_mail_dir }}'
+    - '{{ mail_relay_spool_postfix_dir }}'
+    - '{{ mail_relay_opendkim_keys_dir }}'
+    - '{{ mail_relay_sasl_dir }}'
+  when: item.startswith("/")

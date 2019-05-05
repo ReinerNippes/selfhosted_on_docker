@@ -1,0 +1,12 @@
+---
+# Some common variables used in more then one roles
+
+
+selfhosted_base_dir:            '/opt/selfhosted'
+selfhosted_credential_store:    '{{ selfhosted_base_dir }}/secrets'
+
+docker_default_postgres_image:  '10-alpine'
+docker_default_mysql_image:     'latest'
+docker_default_nginx_image:     'alpine'
+docker_default_redis_image:     'alpine'
+docker_default_mongodb_image:   'latest'

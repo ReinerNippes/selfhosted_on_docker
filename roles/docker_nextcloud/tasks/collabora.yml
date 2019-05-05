@@ -1,0 +1,28 @@
+---
+# tasks file to start collabora container
+
+- name: '{{ app_name }} | generate admin passwd if app_collabora_passwd is empty'
+  set_fact:
+    app_collabora_passwd: "{{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_collabora_secret chars=ascii_letters,digits length=32') }}"
+  when: app_collabora_passwd == ''
+
+
+- name: '{{ app_name }} | Create the {{ app_name }} collabora container'
+  docker_container:
+    name:            '{{ app_name }}-collabora'
+    image:           collabora/code:{{ app_collabora_image | default('latest') }}
+    restart_policy:  unless-stopped
+    tty:             true
+    capabilities:    MKNOD
+    networks:        [ name: '{{ app_name }}' ] 
+    purge_networks:  true
+    links:           '{{ app_name }}'
+    env:
+      domain:        '{{ app_server_fqdn }}'
+      username:      '{{ app_collabora_admin }}'
+      password:      '{{ app_collabora_passwd }}'
+      server_name:   '{{ app_server_fqdn }}'
+      dictionaries:  '{{ site_item.collabora_dictionaries | default("en_US de_DE") }}'
+    labels:
+      traefik.enable:                                   'false'
+      com.centurylinklabs.watchtower.enable:            '{{ app_collabora_watchtower }}'

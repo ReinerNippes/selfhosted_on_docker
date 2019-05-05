@@ -1,0 +1,16 @@
+---
+# allow docker access to data dirs if selinux is enabled
+
+- name: '{{ app_name }} | selinux targets'
+  sefcontext:
+    target: "{{ item }}"
+    setype: container_var_lib_t
+    state: present
+  loop: 
+    - '{{ app_base_dir }}(/.*)?'
+  when: ansible_os_family == "RedHat"
+
+- name: '{{ app_name }} | restorecon'
+  command: restorecon -Rv '{{ app_base_dir }}'
+  when: ansible_os_family == "RedHat"
+

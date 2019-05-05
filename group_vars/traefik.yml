@@ -1,0 +1,6 @@
+---
+# Traefik varibales
+
+traefik_config_dir:  "{{ selfhosted_base_dir }}/traefik"
+traefik_api_user:    'traefik'
+

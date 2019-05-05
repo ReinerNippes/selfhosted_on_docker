@@ -1,0 +1,37 @@
+---
+
+- name: 'Create postfix container'
+  docker_container:
+    name:           'mail-relay'
+    image:          'mwader/postfix-relay:{{ docker_postfix_image }}'
+    restart_policy: 'unless-stopped'
+    env:
+      POSTFIX_myhostname:                   '{{ selfhosted_mail_domain }}'
+      POSTFIX_mynetworks:                   '127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.0.0.0/8 192.168.0.0/16'
+      POSTFIX_mydestination:                '{{ selfhosted_mail_domain }},localhost'
+      POSTFIX_smtp_tls_security_level:      'may'
+      POSTFIX_smtpd_tls_security_level:     'none'
+      POSTFIX_smtp_sasl_auth_enable:        'yes'
+      POSTFIX_smtp_sasl_password_maps:      'hash:/etc/postfix/sasl/sasl_passwd'
+      POSTFIX_smtp_sasl_security_options:   'noanonymous'
+      POSTFIX_relayhost:                    '{{ upstream_smtp_host }}'
+      relayhost_username:                   '{{ upstream_smtp_username }}'
+      relayhost_passwd:                     '{{ upstream_smtp_password }}'
+      POSTFIX_smtp_tls_CAfile:              '/etc/ssl/certs/ca-certificates.crt'
+      POSTFIX_smtp_tls_note_starttls_offer: 'yes'
+      POSTFIX_smtp_use_tls:                 'yes'
+    expose:
+      - "25"
+    labels:
+      com.centurylinklabs.watchtower.enable: '{{ watchtower_postfix }}'
+      traefik.enable:                        'false'
+    networks:  [ name: 'frontend' ]
+    volumes:
+      - "{{ mail_relay_lib_postfix_dir }}:/var/lib/postfix"
+      - "{{ mail_relay_mail_dir }}:/var/mail"
+      - "{{ mail_relay_spool_postfix_dir }}:/var/spool/postfix"
+      - "{{ mail_relay_opendkim_keys_dir }}:/etc/opendkim/keys"
+      - "{{ mail_relay_sasl_dir }}:/etc/postfix/sasl"
+      - "{{ ca_certificate_file[ansible_distribution] }}:/etc/ssl/certs/ca-certificates.crt:ro"
+    command: '/bin/bash -c "echo {{ upstream_smtp_host }} {{ upstream_smtp_username }}:{{ upstream_smtp_password }} > /etc/postfix/sasl/sasl_passwd && /usr/sbin/postmap /etc/postfix/sasl/sasl_passwd && /root/run"'
+    state:  'started'

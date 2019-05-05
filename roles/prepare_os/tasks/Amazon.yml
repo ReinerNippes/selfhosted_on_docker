@@ -1,0 +1,35 @@
+---
+# AWS Linux related tasks
+
+- name: add amazon epel repo
+  shell: amazon-linux-extras install epel
+  args:
+    creates: /etc/yum.repos.d/amzn2-extras.repo
+
+- name: update os
+  yum:
+    name: '*'
+    update_cache: true
+    state: latest
+
+- name: install needed packages
+  yum:
+    name: 
+      - zip
+      - unzip
+      - bzip2
+      - screen
+      - curl
+      - wget
+      - policycoreutils-python
+      - facter
+      - firewalld
+    state: latest
+
+- name: enabled firewalld
+  systemd:
+    name:    firewalld
+    state:   started
+    enabled: true
+    daemon_reload: yes
+    

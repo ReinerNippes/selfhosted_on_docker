@@ -1,0 +1,12 @@
+---
+# tasks file to start watchtower container 
+
+- name: 'Create watchtower container'
+  docker_container:
+    name:           'watchtower'
+    image:          'containrrr/watchtower:{{ docker_watchtower_image | default("latest") }}'
+    command:        '--cleanup --schedule "0 0 0 * * *"'
+    restart_policy: 'unless-stopped'
+    volumes:        '/var/run/docker.sock:/var/run/docker.sock'
+    state:          'started'
+      

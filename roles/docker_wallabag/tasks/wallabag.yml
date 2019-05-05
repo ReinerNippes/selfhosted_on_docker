@@ -1,0 +1,14 @@
+---
+# tasks file to start wallabag container
+
+- name: "Create wallabag container"
+  docker_container:
+    name:           '{{ app_name }}'
+    image:          'wallabag/wallabag:{{ app_docker_image }}'
+    restart_policy: 'unless-stopped'
+    links:          '{{ app_name }}-db:db'
+    networks:       [ name: "{{ app_name }}" ]
+    purge_networks: true
+    volumes:        '{{ app_docker_vol }}'
+    env:            '{{ app_docker_env[app_db_type] }}'
+    labels:         '{{ app_docker_labels }}'

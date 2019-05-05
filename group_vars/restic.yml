@@ -1,0 +1,12 @@
+---
+
+# Install restic backup tool if backup_folder is not empty
+# more info about restic: https://restic.readthedocs.io/en/latest/
+backup_folder:        ''  # e.g. /var/nc-backup
+
+# crontab settings restic for restic
+backup_day:           '*'
+backup_hour:          '4'
+backup_minute:        '0'
+
+rclone_install:       true

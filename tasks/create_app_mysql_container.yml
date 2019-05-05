@@ -1,0 +1,28 @@
+---
+# tasks file for docker app mysql container
+
+- name: '{{ app_name }} | create data volume'
+  docker_volume:
+    name: '{{ app_name }}-db-vol'
+    state: present
+
+- name: '{{ app_name }} | create mysql container'
+  docker_container:
+    name: "{{ app_name }}-db"
+    image: mariadb:{{ app_docker_mysql_image | default('latest') }}
+    restart_policy: unless-stopped
+    user: mysql:mysql
+    env:
+        MYSQL_DATABASE:      "{{ app_db_name }}"
+        MYSQL_USER:          "{{ app_db_user }}"
+        MYSQL_PASSWORD:      "{{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_database_user_secret chars=ascii_letters,digits length=32') }}"
+        MYSQL_ROOT_PASSWORD: "{{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_mysql_root_secret chars=ascii_letters,digits length=32') }}"
+    volumes: 
+      - "{{ app_name }}-db-vol:/var/lib/mysql"
+    networks:
+      - name: "{{ app_name }}"
+    purge_networks:           true
+    labels:
+      traefik.enable:                         'false'
+      com.centurylinklabs.watchtower.enable:  '{{ app_db_watchtower }}'
+    state: 'started'

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+export RESTIC_REPOSITORY="{{ restic_repo }}"
+export RESTIC_PASSWORD="{{ restic_backup_secret }}"
+
+# abort entire script if any command fails
+set -e
+
+# unlock restic to keep automatic backups going
+{{ restic_install_path }}/restic unlock --cleanup-cache
+
+# backup section starts here <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+# backup section ends here <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# clean up backup dir
+{{ restic_install_path }}/restic forget --keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 75
+{{ restic_install_path }}/restic prune

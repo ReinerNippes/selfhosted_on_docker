@@ -1,0 +1,27 @@
+---
+# create all diretories
+
+- name: make sure {{ app_base_dir }} is present
+  file:
+    name: "{{ app_base_dir }}"
+    state: directory
+
+- name: make sure nextcloud directoies are present
+  file:
+    name:  "{{ item.name }}"
+    owner: "{{ item.user }}"
+    group: "{{ item.group }}"
+    state: directory
+  loop:
+    - {name: "{{ app_config_dir }}", user: "{{ 82 if ( 'fpm' in docker_nextcloud_image ) else 33 }}", group: "{{ 82 if ( 'fpm' in docker_nextcloud_image ) else 33 }}" }
+    - {name: "{{ app_data_dir }}", user: "{{ 82 if ( 'fpm' in docker_nextcloud_image ) else 33 }}", group: "{{ 82 if ( 'fpm' in docker_nextcloud_image ) else 33 }}"  }
+    - {name: "{{ app_www_dir }}", user: "{{ 82 if ( 'fpm' in docker_nextcloud_image ) else 33 }}", group: "root"  }
+    - {name: "{{ app_datadump_dir }}", user: "root", group: "root"  }
+  when: item.name.startswith("/")
+  
+- name: configure selinux if needed
+  include_tasks: tasks\selinux_docker_dirs.yml
+  when:
+    - ('status' in ansible_selinux)
+    - (ansible_selinux.status == "enabled")
+    

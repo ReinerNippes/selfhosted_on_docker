@@ -1,0 +1,29 @@
+---
+# create all diretories for bookstack
+
+- name: '{{ app_name }} | make sure {{ app_base_dir }} is present'
+  file:
+    name:  "{{ app_base_dir }}"
+    owner: root
+    group: root
+    mode:  0700
+    state: directory
+
+- name: '{{ app_name }} | make sure {{ app_name }} directoies are present'
+  file:
+    name:  "{{ item }}"
+    mode:  0700
+    owner: daemon
+    group: daemon
+    state: directory
+  loop:
+    - "{{ app_data_dir }}"
+    - "{{ app_datadump_dir }}"
+  when: item.startswith("/")
+
+- name: '{{ app_name }} | configure selinux if needed'
+  include_tasks: tasks\selinux_docker_dirs.yml
+  when:
+    - ('status' in ansible_selinux)
+    - (ansible_selinux.status == "enabled")
+  

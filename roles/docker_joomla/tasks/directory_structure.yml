@@ -1,0 +1,24 @@
+---
+# create all diretories
+
+- name: '{{ app_name }} | make sure {{ app_base_dir }} is present'
+  file:
+    name: "{{ app_base_dir }}"
+    state: directory
+
+- name: '{{ app_name }} | make sure {{ app_base_dir }} directoies are present'
+  file:
+    name:  "{{ item }}"
+    owner: "{{ 82 if ( 'fpm' in app_docker_image ) else 33 }}"
+    group: "{{ 82 if ( 'fpm' in app_docker_image ) else 33 }}"
+    state: directory
+  loop:
+    - "{{ app_datadump_dir }}"
+    - "{{ app_config_dir }}"
+  when: item.startswith("/")
+  
+- name: '{{ app_name }} | configure selinux if needed'
+  include_tasks: tasks\selinux_docker_dirs.yml
+  when:
+    - ('status' in ansible_selinux)
+    - (ansible_selinux.status == "enabled")

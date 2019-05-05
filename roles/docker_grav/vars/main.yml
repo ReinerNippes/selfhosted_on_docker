@@ -1,0 +1,37 @@
+---
+# vars file for docker_grav
+
+app_name:  grav
+
+network_base_container:
+      - traefik
+
+app_docker_env:
+    VIRTUAL_HOST: '{{ app_server_fqdn }}'
+
+app_docker_vol:
+    - '{{ app_data_dir }}:/usr/html:rw'
+    - '{{ app_name }}-usr-vol:/usr:rw'
+
+app_docker_labels:
+    traefik.docker.network:                        'frontend'
+    traefik.enable:                                'true'
+    traefik.frontend.rule:                         'Host:{{ app_server_fqdn }}'
+    traefik.port:                                  '80'
+    traefik.protocol:                              'http'
+    traefik.frontend.headers.referrerPolicy:       'no-referrer'
+    traefik.frontend.headers.SSLRedirect:          'true'
+    traefik.frontend.headers.STSSeconds:           '315360000'
+    traefik.frontend.headers.browserXSSFilter:     'true'
+    traefik.frontend.headers.contentTypeNosniff:   'true'
+    traefik.frontend.headers.forceSTSHeader:       'true'
+    traefik.frontend.headers.STSIncludeSubdomains: 'true'
+    traefik.frontend.headers.STSPreload:           'true'
+    traefik.frontend.headers.frameDeny:            'true'
+    com.centurylinklabs.watchtower.enable:         '{{ app_watchtower }}'
+ 
+backup_script_block: |
+    #
+    # backup the data dir
+    {{ restic_install_path }}/restic backup {{ app_data_dir }}
+    #

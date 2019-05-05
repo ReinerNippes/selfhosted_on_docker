@@ -1,0 +1,55 @@
+---
+# tasks file to start nextcloud container
+
+- name: '{{ app_name }} | create www-data group'
+  group:
+    name: 'www-data'
+    gid:  '82'
+
+- name: '{{ app_name }} | create www-data user'
+  user:
+    name:        'www-data'
+    group:       'www-data'
+    uid:         '82'
+    system:      true
+    home:        '{{ selfhosted_base_dir }}'
+    create_home: 'false'
+    shell:       '/bin/false'
+    comment:     'nginx user'
+    state:       'present'
+  when: ( 'fpm' in docker_nextcloud_image )
+
+- name: '{{ app_name }} | copy php.ini to {{ app_config_dir }}'
+  copy:
+    src:  "php.ini"
+    dest: "{{ app_config_dir }}/php.ini"
+    owner: "{{ 82 if ( 'fpm' in docker_nextcloud_image ) else 33 }}"
+    group: "{{ 82 if ( 'fpm' in docker_nextcloud_image ) else 33 }}"
+    mode: 0644
+
+- name: '{{ app_name }} | Create the nextcloud container'
+  docker_container:
+    name:           '{{ app_name }}'
+    image:          "nextcloud:{{ docker_nextcloud_image | default('latest') }}"
+    restart_policy: 'always'
+    networks:
+      - name: '{{ app_name }}'
+    purge_networks: true
+    links:
+      - '{{ app_name }}-db:db'
+      - '{{ app_name }}-redis:redis'
+    volumes:
+      - "{{ app_www_dir }}:/var/www/html"
+      - "{{ app_config_dir }}:/var/www/html/config"
+      - "{{ app_data_dir }}:{{ app_container_data_dir }}"
+      - "{{ app_config_dir }}/php.ini:/usr/local/etc/php/php.ini"
+    labels:
+      "{{ nextcloud_traefik_label['nginx' if ( 'fpm' in docker_nextcloud_image ) else 'apache'] }}"
+    state: 'started'
+  register: docker_result
+    
+- name: '{{ app_name }} | wait for nextcloud container to come up'
+  wait_for:
+    delay: 10
+    path: '{{ app_www_dir }}/lib/versioncheck.php'
+  when: docker_result.changed

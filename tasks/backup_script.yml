@@ -1,0 +1,14 @@
+---
+
+# include nextcloud in backup script
+
+- name: '{{ app_name }} | include backup vars'
+  include_vars: group_vars/backup.yml
+
+
+- name: '{{ app_name }} | include {{ app_name }} in backup script'
+  blockinfile:
+    content:     '{{ backup_script_block }}'
+    path:        '/usr/local/bin/backup_selfhosted.sh'
+    insertafter: '# backup section starts here'
+    marker:      '# {mark} backup {{ app_name }} - ansible managed block'

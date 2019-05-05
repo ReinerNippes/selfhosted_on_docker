@@ -1,0 +1,15 @@
+---
+# tasks file to start bookstack container
+
+- name: '{{ app_name }} | create bookstack container'
+  docker_container:
+    name:           '{{ app_name }}'
+    image:          'linuxserver/bookstack:{{ app_docker_image }}'
+    restart_policy: 'unless-stopped'
+    links:          '{{ app_name }}-db:db'
+    networks:       [ name: '{{ app_name }}' ]
+    purge_networks: true
+    volumes:        '{{ app_docker_vol }}'
+    env:            '{{ app_docker_env }}'
+    labels:         '{{ app_docker_labels }}'
+    state:          '{{ state | default("started") }}'

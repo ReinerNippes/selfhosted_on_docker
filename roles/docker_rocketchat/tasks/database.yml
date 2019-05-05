@@ -1,0 +1,34 @@
+---
+# tasks file for docker_rocketchat
+
+- name: '{{ app_name }} | create mongodb container'
+  docker_container:
+    name:                    '{{ app_name }}-db'
+    image:                   "mongo:{{ app_docker_mongodb_image | default('latest') }}"
+    restart_policy:          'unless-stopped'
+    command:                 'mongod --smallfiles --oplogSize 128 --replSet rs0 --bind_ip_all'
+    volumes: 
+      - '{{ app_database_dir }}:/data/db'
+      - '{{ app_database_config_dir }}:/data/configdb'
+      - '{{ app_datadump_dir }}:/dump'
+    networks:
+      - name: "{{ app_name }}"
+    labels:
+      traefik.enable:                         'false'
+      com.centurylinklabs.watchtower.enable:  '{{ app_db_watchtower }}'
+    state: "started"
+    
+- name: '{{ app_name }} | init replica mongodb container'
+  docker_container:
+    name:                    '{{ app_name }}-db-init-replica'
+    image:                   "mongo:{{ app_docker_mongodb_image | default('latest') }}"
+    command:                 'mongo {{ app_name }}-db/rocketchat --eval "rs.initiate({ _id: ''rs0'', members: [ { _id: 0, host: ''{{ app_name }}-db:27017'' } ]})"'
+    volumes: 
+      - '{{ app_database_dir }}://data/db'
+      - '{{ app_database_config_dir }}://data/configdb'
+    networks:
+      - name: "{{ app_name }}"
+    labels:
+      traefik.enable:                         'false'
+      com.centurylinklabs.watchtower.enable:  '{{ app_db_watchtower }}'
+    state: "started"

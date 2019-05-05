@@ -1,0 +1,24 @@
+---
+# tasks file for docker_rocketchat
+# start all needed rocketchat container
+
+- name: '{{ app_name }} | include vars'
+  include_vars: "{{ item }}"
+  loop:
+    - group_vars/rocketchat.yml
+
+- name: '{{ app_name }} | include directory structure'
+  include_tasks: directory_structure.yml
+
+- name: '{{ app_name }} | rocketchat network'
+  include_tasks: network.yml
+
+- name: '{{ app_name }} | docker database'
+  include_tasks: database.yml
+
+- name: '{{ app_name }} | docker rocketchat'
+  include_tasks: rocketchat.yml
+
+- name: '{{ app_name }} | backup rocketchat'
+  include_tasks: tasks/backup_script.yml
+  when: backup_enabled

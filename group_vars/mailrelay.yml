@@ -1,0 +1,25 @@
+---
+# Some common variables used in more then one roles
+
+docker_postfix_image:           'latest'
+
+# Enable/disable auto container updates via watchtower
+watchtower_postfix:             'false'
+
+
+upstream_smtp_host:          ''
+upstream_smtp_username:      ''
+upstream_smtp_password:      ''
+upstream_smtp_from_address:  ''
+
+mail_relay_lib_postfix_dir:   'postfix-var-lib-vol'
+mail_relay_mail_dir:          'postfix-var-mail-vol'
+mail_relay_spool_postfix_dir: 'postfix-var-spool-vol'
+mail_relay_opendkim_keys_dir: 'postfix-etc-opendkim-keys-vol'
+mail_relay_sasl_dir:          'postfix-etc-postfix-sasl-vol'
+
+ca_certificate_file:
+    Ubuntu: '/etc/ssl/certs/ca-certificates.crt'
+    Debian: '/etc/ssl/certs/ca-certificates.crt'
+    CentOS: '/etc/ssl/certs/ca-bundle.crt'
+    Amazon: '/etc/ssl/certs/ca-bundle.crt'
