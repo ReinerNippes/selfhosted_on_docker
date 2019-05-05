@@ -189,6 +189,14 @@ This a list of all available apps:
 
 How many apps you can host on one machine depends on your machine and your users. Well. What else.
 
+## Install the apps
+
+Run
+
+```bash
+./prepare_site.yml
+```
+
 ## Access your apps
 
 You'll find all passwords in /opt/selfhosted/secrets. To get a complete list run `sudo grep -r '' /opt/selfhosted/secrets`.
