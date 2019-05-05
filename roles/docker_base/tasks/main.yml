@@ -49,7 +49,6 @@
   include_tasks: adminer.yml
   when: 
     - adminer_enabled
-    - nextcloud_db_type != 'sqlite'
 
 - name: docker postfix mail relay
   include_tasks: mailrelay.yml
