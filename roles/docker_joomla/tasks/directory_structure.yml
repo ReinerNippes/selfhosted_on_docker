@@ -14,6 +14,7 @@
     state: directory
   loop:
     - "{{ app_datadump_dir }}"
+    - "{{ app_data_dir }}"
     - "{{ app_config_dir }}"
   when: item.startswith("/")
   

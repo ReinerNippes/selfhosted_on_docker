@@ -15,15 +15,12 @@ app_nginx_watchtower:       'false'
 
 # data dir
 app_base_dir:               '{{ selfhosted_base_dir }}/{{ app_name }}'
-app_data_dir:               '{{ app_name }}-data'
+app_data_dir:               '{{ app_base_dir }}/data'
 app_config_dir:             '{{ app_base_dir }}/config'
 app_datadump_dir:           '{{ app_base_dir }}/database_dump'
 
 # database settings (choose one)
 app_db_type:                'mysql'        # (MariaDB) 
-#app_db_type:               'pgsql'        # (PostgreSQL) !!! not yet working !!!
-
-app_database_initdb_args:   '--encoding=UTF-8 --lc-collate=C --locale=de_DE.UTF-8'
 
 # options for mariadb or postgres
 app_db_name:                'joomla'
