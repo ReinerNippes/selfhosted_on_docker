@@ -26,7 +26,7 @@ app_docker_env:
       POPULATE_DATABASE:               'True'
       SYMFONY_ENV:                     'prod'
   pgsql:
-      POSTGRES_PASSWORD:                   "{{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_db_user_secret chars=ascii_letters,digits length=32') }}"
+      POSTGRES_PASSWORD:                   "{{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_database_user_secret chars=ascii_letters,digits length=32') }}"
       POSTGRES_USER:                       '{{ app_db_user }}'
       SYMFONY__ENV__DATABASE_DRIVER:       'pdo_pgsql'
       SYMFONY__ENV__DATABASE_HOST:         '{{ app_name }}-db'
@@ -34,7 +34,7 @@ app_docker_env:
       SYMFONY__ENV__DATABASE_DRIVER_CLASS: 'Wallabag\CoreBundle\Doctrine\DBAL\Driver\CustomPostgreSQLDriver'
       SYMFONY__ENV__DATABASE_NAME:         'symfony'
       SYMFONY__ENV__DATABASE_USER:         'symfony'
-      SYMFONY__ENV__DATABASE_PASSWORD:     "{{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_db_user_secret chars=ascii_letters,digits length=32') }}"
+      SYMFONY__ENV__DATABASE_PASSWORD:     "{{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_database_user_secret chars=ascii_letters,digits length=32') }}"
       SYMFONY__ENV__DATABASE_CHARSET:      'utf8'
       SYMFONY__ENV__MAILER_HOST:           'mail-relay'
       SYMFONY__ENV__MAILER_USER:           ''

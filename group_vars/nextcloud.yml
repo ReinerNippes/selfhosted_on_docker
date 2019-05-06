@@ -7,10 +7,10 @@ app_onlyoffice_fqdn:               '{{ onlyoffice_server_fqdn }}'
 # docker image version
 docker_nextcloud_image:           'fpm-alpine'
 
-docker_nextcloud_postgres_image:  '{{ docker_default_postgres_image }}'
-docker_nextcloud_mysql_image:     '{{ docker_default_mysql_image }}'
-docker_nextcloud_nginx_image:     '{{ docker_default_nginx_image }}'
-docker_nextcloud_redis_image:     '{{ docker_default_redis_image }}'
+app_docker_postgres_image:        '{{ docker_default_postgres_image }}'
+app_docker_mysql_image:           '{{ docker_default_mysql_image }}'
+app_nginx_image:                  '{{ docker_default_nginx_image }}'
+app_redis_image:                  '{{ docker_default_redis_image }}'
 docker_turnserver_image:          'latest'
 
 # Enable/disable auto container updates via watchtower

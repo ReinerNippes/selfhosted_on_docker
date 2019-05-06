@@ -24,7 +24,7 @@
 - name: '{{ app_name }} | Create the nginx container'
   docker_container:
     name: "{{ app_name }}-nginx"
-    image: nginx:{{ docker_nextcloud_nginx_image | default('latest') }}
+    image: nginx:{{ app_nginx_image | default('latest') }}
     restart_policy: always
     networks:
       - name: "{{ app_name }}"

@@ -9,13 +9,13 @@
 - name: '{{ app_name }} | create postgres container'
   docker_container:
     name:           '{{ app_name }}-db'
-    image:          'postgres:{{ docker_nextcloud_postgres_image | default("latest") }}'
+    image:          'postgres:{{ app_docker_postgres_image | default("latest") }}'
     restart_policy: 'unless-stopped'
     user:           'postgres:postgres'
     env:
         POSTGRES_DB:          '{{ app_db_name }}'
         POSTGRES_USER:        '{{ app_db_user }}'
-        POSTGRES_PASSWORD:    '{{ lookup("password", "{{ selfhosted_credential_store }}/{{ app_name }}_db_user_secret chars=ascii_letters,digits length=32") }}'
+        POSTGRES_PASSWORD:    '{{ lookup("password", "{{ selfhosted_credential_store }}/{{ app_name }}_database_user_secret chars=ascii_letters,digits length=32") }}'
         PGDATA:               '/var/lib/postgresql/data'
         POSTGRES_INITDB_ARGS: '{{ app_database_initdb_args | default("") }}'
     volumes:                  [ '{{ app_name }}-db-vol:/var/lib/postgresql/data:rw' ]

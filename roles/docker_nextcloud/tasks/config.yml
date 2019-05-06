@@ -12,7 +12,7 @@
     docker exec --user www-data {{ app_name }} php occ  maintenance:install 
     --database {{ app_db_type }} --database-host {{ app_name }}-db --database-name {{ app_db_name }} 
     --database-table-prefix {{ app_db_prefix }} --database-user {{ app_db_user }} 
-    --database-pass {{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_db_user_secret chars=ascii_letters,digits length=32') }} 
+    --database-pass {{ lookup('password', '{{ selfhosted_credential_store }}/{{ app_name }}_database_user_secret chars=ascii_letters,digits length=32') }} 
     --admin-user {{ app_admin }} --admin-pass {{ app_passwd }} --data-dir {{ app_container_data_dir }}
   args:
     creates: "{{ app_config_dir }}/config.php"
