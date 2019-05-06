@@ -6,3 +6,6 @@
 
 - name: include os tuning tasks
   include_tasks: tuning.yml
+
+- name: create base directories
+  include_tasks: directory_structure.yml
