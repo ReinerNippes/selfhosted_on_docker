@@ -28,7 +28,7 @@ git clone https://github.com/ReinerNippes/selfhosted_on_docker
 cd selfhosted_on_docker
 ```
 
-Install [Ansible](https://www.ansible.com/) and some needed tools by running the following command with a user that can sudo or is root. 
+Install [Ansible](https://www.ansible.com/) and some needed tools by running the following command with a user that can sudo or is root.
 
 ```bash
 ./prepare_ansible.sh
@@ -62,13 +62,13 @@ ssl_cert_email: selfhosted@.example.tld
 
 # set this to true if you want to enable a postfix mail relay for all your selfhosted services
 # edit group_vars/mail_relay.yml to set user/password for your upstream mail server
-# all container can use this relay server to send mail 
+# all container can use this relay server to send mail
 mailrelay_enabled: true
 
 # your maildomain
 selfhosted_mail_domain: '{{ base_domain }}'
 
-# Enable to backup your server 
+# Enable to backup your server
 backup_enabled: false
 
 # adminer is a webfront end for your database at https://{{ base_domain }}/adminer/
@@ -88,7 +88,7 @@ Now you can define the apps you want to run by editing the variable `selfhosted_
 
 Lets start with the base setup
 
-```yaml 
+```yaml
 selfhosted_sites:
   - name: base
     type: base
@@ -99,10 +99,10 @@ Don't edit or delete this. It's the base setup. It provides the basic container 
 
 ### Turnserver
 
-If you want to use Talk with Nextcloud setup a turnserver. All Nextcloud instances will share the same turnserver. 
-The server_fqdn must be the same as the base setup. Otherwise no certificates wil be created. 
+If you want to use Talk with Nextcloud setup a turnserver. All Nextcloud instances will share the same turnserver.
+The server_fqdn must be the same as the base setup. Otherwise no certificates wil be created.
 
-```yaml 
+```yaml
   - name: talk
     type: turnserver
     server_fqdn: {{ base_domain }}
@@ -118,7 +118,7 @@ If you want to start an Joomla app named myjoomla at joomla.selfhosted.example.t
     server_fqdn: joomla.{{ base_domain }}
 ```
 
-The name variable is used as the container name. So be carefull with special charaters. 
+The name variable is used as the container name. So be carefull with special charaters.
 
 ### Some more apps
 
@@ -181,7 +181,7 @@ This a list of all available apps:
   - name: rocketchat
     type: rocketchat
     server_fqdn: rocketchat.{{ base_domain }}
-    
+
   - name: wallabag
     type: wallabag
     server_fqdn: wallabag.{{ base_domain }}
@@ -201,7 +201,7 @@ Run
 
 You'll find all passwords in /opt/selfhosted/secrets. To get a complete list run `sudo grep -r '' /opt/selfhosted/secrets`.
 
-```
+```text
 /opt/selfhosted/secrets/bookstack_database_user_secret:kAO4pbmWbcalPq7fsp3z5PQLZbDD5C2n
 /opt/selfhosted/secrets/bookstack_mysql_root_secret:36OeJ3KNjGQLOz7HqLsjNA1Rkr2uBuD6
 /opt/selfhosted/secrets/joomla_database_user_secret:hpfWmTQCT3gXkbjl05NwMcXZrcnnuQOa
@@ -219,13 +219,13 @@ You'll find all passwords in /opt/selfhosted/secrets. To get a complete list run
 
 Nextcloud is ready to run. You can login as admin and start work.
 
-All other apps have to be configured via their web interfaces. Please note that some apps are open to world until you configure them. E.g. `grav`. 
+All other apps have to be configured via their web interfaces. Please note that some apps are open to world until you configure them. E.g. `grav`.
 
-The name of the database host for all apps is `{{ app_name }}-db`. In the above example of myjoomla it would be `myjoomla-db`. The db user you'll find in `group_vars/joomla.yml`. 
+The name of the database host for all apps is `{{ app_name }}-db`. In the above example of myjoomla it would be `myjoomla-db`. The db user you'll find in `group_vars/joomla.yml`.
 
 ### Mail relay
 
-Enter the credentials of your upstream smtp server in `group_vars/mailrelay.yml` 
+Enter the credentials of your upstream smtp server in `group_vars/mailrelay.yml`
 
 ```yaml
 upstream_smtp_host:          ''
@@ -234,7 +234,7 @@ upstream_smtp_password:      ''
 upstream_smtp_from_address:  ''
 ```
 
-Configure your mail-relay container in your app. Below is the example for Nextcloud. Other apps must be configure through there web gui. 
+Configure your mail-relay container in your app. Below is the example for Nextcloud. Other apps must be configure through there web gui.
 
 ```yaml
 # Nextcloud mail setup
@@ -257,7 +257,7 @@ That's a long story. It's good to know yaml, jinja2 and ansible.
 
 To start look at the yaml files in `group_vars/*.yml`.
 
-If you don't like `/opt/selfhosted` as the base directory you may change it in `group_vars/all.yml`. If your favorite Postgrsql version isn't '10-alpine' you may change it in this file as well. 
+If you don't like `/opt/selfhosted` as the base directory you may change it in `group_vars/all.yml`. If your favorite Postgrsql version isn't '10-alpine' you may change it in this file as well.
 
 But. That's not tested. You may try.
 
@@ -272,7 +272,7 @@ docker_default_redis_image:     'alpine'
 docker_default_mongodb_image:   'latest'
 ```
 
-If you want to fine tune the apps you have look into each yml file. 
+If you want to fine tune the apps you have look into each yml file.
 
 For example if you want to change the mysql image for bookstack you may edit bookstack.yml and change `app_docker_mysql_image:  '10.4.4'`
 
@@ -309,7 +309,7 @@ The watchtower container takes care about your container and can update them aut
 
 ## Remove everything
 
-If you want to get rid of the containers, networks and volumes run the following command. 
+If you want to get rid of the containers, networks and volumes run the following command.
 
 ```bash
 sudo ./scripts/remove_all_container.sh
@@ -321,4 +321,4 @@ Your data won't be deleted. You have to do this with.
 sudo rm -rf /opt/selfhosted
 ```
 
-If you test your setup it's wise to have a backup of `/opt/selfhosted/traefik`. Letsencrypt limits the number of certificate request to there server. 
+If you test your setup it's wise to have a backup of `/opt/selfhosted/traefik`. Letsencrypt limits the number of certificate request to there server.
