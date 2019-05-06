@@ -1,0 +1,29 @@
+---
+# drupal varibales
+
+# docker image version
+app_docker_image:           'fpm-alpine'
+app_nginx_image:            'latest'
+
+app_docker_postgres_image:  '10-alpine'
+app_docker_mysql_image:     '{{ docker_default_mysql_image }}'
+
+# Enable/disable auto container updates via watchtower
+app_watchtower:             'false'
+app_db_watchtower:          'false'
+app_nginx_watchtower:       'false'
+
+# data dir
+app_base_dir:               '{{ selfhosted_base_dir }}/{{ app_name }}'
+app_data_dir:               '{{ app_base_dir }}/data'
+app_config_dir:             '{{ app_base_dir }}/config'
+app_datadump_dir:           '{{ app_base_dir }}/database_dump'
+
+# database settings (choose one)
+# app_db_type:              'mysql'        # (MariaDB) 
+app_db_type:                'pgsql'        # (Postgresql) 
+
+# options for mariadb or postgres
+app_db_name:                'drupal'
+app_db_user:                'drupal'
+app_db_passwd:              ''              # leave empty to generate random password
