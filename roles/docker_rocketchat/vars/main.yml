@@ -3,9 +3,9 @@
 
 app_name:  rocketchat
 
-network_base_container:
+network_base_container: 
+      - '{{ "mail-relay" if  mailrelay_enabled else _ | default(omit) }}'
       - traefik
-      - mail-relay
 
 app_docker_env:
       ROOT_URL:        'https://{{ app_server_fqdn }}'

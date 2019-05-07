@@ -3,10 +3,10 @@
 
 app_name:  drupal
 
-network_base_container:
-      - traefik
+network_base_container: 
       - '{{ "adminer" if  adminer_enabled else _ | default(omit) }}'
-      - mail-relay
+      - '{{ "mail-relay" if  mailrelay_enabled else _ | default(omit) }}'
+      - traefik
 
 app_docker_env:
   mysql:
@@ -28,8 +28,7 @@ app_docker_env:
       POSTGRES_DATABASE_CHARSET:      'utf8'
 
 app_docker_vol:
-      - "{{ app_name }}-html-vol:/var/www/html"
-#      - "{{ app_data_dir }}:/var/www/html/sites"
+      - "{{ app_data_dir }}:/var/www/html"
 
 app_docker_labels:
       traefik.docker.network:                           'frontend'

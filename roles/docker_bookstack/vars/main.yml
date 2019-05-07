@@ -3,10 +3,10 @@
 
 app_name:  bookstack
 
-network_base_container:
+network_base_container: 
+      - '{{ "adminer" if  adminer_enabled else _ | default(omit) }}'
+      - '{{ "mail-relay" if  mailrelay_enabled else _ | default(omit) }}'
       - traefik
-      - '{{ "adminer" if adminer_enabled else "traefik" }}'
-      - mail-relay
 
 app_docker_env:
   DB_DATABASE:       '{{ app_db_name }}'

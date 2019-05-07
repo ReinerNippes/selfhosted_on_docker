@@ -3,6 +3,11 @@
 
 app_name:  nextcloud
 
+network_base_container: 
+      - '{{ "adminer" if  adminer_enabled else _ | default(omit) }}'
+      - '{{ "mail-relay" if  mailrelay_enabled else _ | default(omit) }}'
+      - traefik
+
 nextcloud_traefik_label:
   nginx:
     traefik.enable:                        "false"
@@ -23,11 +28,6 @@ nextcloud_traefik_label:
     traefik.frontend.headers.STSPreload:              "true"
     traefik.frontend.headers.customFrameOptionsValue: "SAMEORIGIN"
     com.centurylinklabs.watchtower.enable:            "true"
-
-network_base_container:
-      - traefik
-      - '{{ "adminer" if adminer_enabled else "traefik" }}'
-      - mail-relay
 
 backup_script_block: |
     #    #

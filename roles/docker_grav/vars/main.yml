@@ -3,7 +3,8 @@
 
 app_name:  grav
 
-network_base_container:
+network_base_container: 
+      - '{{ "mail-relay" if  mailrelay_enabled else _ | default(omit) }}'
       - traefik
 
 app_docker_env:
