@@ -15,7 +15,7 @@ app_nginx_watchtower:       'false'
 
 # data dir
 app_base_dir:               '{{ selfhosted_base_dir }}/{{ app_name }}'
-app_data_dir:               '{{ app_base_dir }}/data'
+app_data_dir:               '{{ app_name }}-html-vol'
 app_config_dir:             '{{ app_base_dir }}/config'
 app_datadump_dir:           '{{ app_base_dir }}/database_dump'
 
