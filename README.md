@@ -5,6 +5,7 @@ The following Apps are implemended:
 - Nextcloud + Collabora + Talk
 - Joomla
 - Wordpress
+- Drupal
 - Bookstack
 - Grav
 - Rocket.Chat
