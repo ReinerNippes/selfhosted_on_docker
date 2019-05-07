@@ -88,7 +88,7 @@
   - name: '{{ app_name }} | set collabora wopi url'
     shell: docker exec --user www-data {{ app_name }} php occ config:app:set richdocuments wopi_url --value https://{{ app_server_fqdn }}:443
     when: collabora_app_installed is changed
-  when: site_item.collabora
+  when: site_item.collabora | default(false)
 
 - name: '{{ app_name }} | setup talk app'
   block:
@@ -105,4 +105,4 @@
       - config:app:set spreed stun_servers --value '["{{ site_item.talk_server }}:5349"]'
       - config:app:set spreed turn_servers --value '[{"server":"{{ site_item.talk_server }}:5349","secret":"{{ lookup('password', '{{ selfhosted_credential_store }}/talk_secret chars=ascii_letters,digits length=32') | lower }}","protocols":"udp,tcp"}]'
     when: talk_app_installed is changed
-  when: site_item.talk
+  when: site_item.talk | default(false)
