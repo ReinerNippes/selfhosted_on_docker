@@ -27,3 +27,5 @@ restic_backup_day:    '*'
 restic_backup_minute: '0'
 restic_backup_hour:   '3'
 
+# path to docker volumes - used in backup script
+docker_default_volume_path: /var/lib/docker/volumes
