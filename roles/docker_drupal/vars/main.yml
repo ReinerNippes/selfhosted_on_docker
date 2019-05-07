@@ -29,7 +29,7 @@ app_docker_env:
 
 app_docker_vol:
       - "{{ app_name }}-html-vol:/var/www/html"
-      - "{{ app_data_dir }}:/var/www/html/sites"
+#      - "{{ app_data_dir }}:/var/www/html/sites"
 
 app_docker_labels:
       traefik.docker.network:                           'frontend'

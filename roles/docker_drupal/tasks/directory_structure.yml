@@ -11,6 +11,7 @@
     name:  "{{ item }}"
     owner: "{{ 82 if ( 'fpm' in app_docker_image ) else 33 }}"
     group: "{{ 82 if ( 'fpm' in app_docker_image ) else 33 }}"
+    mode: 0777
     state: directory
   loop:
     - "{{ app_datadump_dir }}"
