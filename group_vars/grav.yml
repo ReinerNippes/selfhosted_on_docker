@@ -11,4 +11,4 @@ app_watchtower:          'true'
 
 # data dir
 app_base_dir:            '{{ selfhosted_base_dir }}/{{ app_name }}'
-app_data_dir:            '{{ app_base_dir }}/data'
+app_data_dir:            '{{ app_name }}-html-vol'
