@@ -1,7 +1,7 @@
 ---
-# tasks file to start joomla container
+# tasks file to start drupal container
 
-- name: '{{ app_name }} | create joomla container'
+- name: '{{ app_name }} | create drupal container'
   docker_container:
     name:           '{{ app_name }}'
     image:          'drupal:{{ app_docker_image }}'
