@@ -48,7 +48,7 @@ backup_script_block: |
     {% endif %}
     
     # backup the data dir
-    {{ restic_install_path }}/restic backup {{ app_data_dir }} {{ app_datadump_dir }}
+    {{ restic_install_path }}/restic backup {{ app_data_dir if app_data_dir.startswith("/") else docker_default_volume_path + '/' + app_data_dir + '/_data' }} {{ app_datadump_dir }}
     #
 
 ...
