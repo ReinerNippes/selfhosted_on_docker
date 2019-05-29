@@ -90,6 +90,27 @@
     when: collabora_app_installed is changed
   when: site_item.collabora | default(false)
 
+- name: '{{ app_name }} | setup onlyoffice app'
+  block:
+  - name: '{{ app_name }} | install onlyoffice app'
+    shell: docker exec --user www-data {{ app_name }} php occ app:install onlyoffice
+    args:
+      creates: '{{ app_www_dir }}/apps/onlyoffice'
+    register: install_onlyoffice_app
+    
+  - name: '{{ app_name }} | enable onlyoffice app'
+    shell: docker exec --user www-data {{ app_name }} php occ app:enable onlyoffice
+    when: install_onlyoffice_app is changed
+  
+  - name: '{{ app_name }} | setup onlyoffice app'
+    shell: docker exec -u www-data {{ app_name }} php occ --no-warnings config:system:set onlyoffice {{ item }}
+    loop:
+      - 'DocumentServerUrl --value="/ds-vpath/"'
+      - 'DocumentServerInternalUrl --value="http://{{ app_name }}-onlyoffice/"'
+      - 'StorageUrl --value="http://{{ app_name }}-nginx/"'
+    when: install_onlyoffice_app is changed
+  when: site_item.onlyoffice | default(false)
+
 - name: '{{ app_name }} | setup talk app'
   block:
   - name: install talk app
