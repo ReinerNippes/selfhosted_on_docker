@@ -1,23 +1,23 @@
 ---
 # tasks file to start nginx container
 
-- name: '{{ app_name }} | copy nginx.conf to {{ app_config_dir }}'
+- name: '{{ app_name }} | copy uploadsize.conf to {{ app_config_dir }}'
   copy:
-    src:  "{{ item }}"
-    dest: "{{ app_config_dir }}/{{ item }}"
-    owner: 82
-    group: 82
-    mode: 0640
+    src:   '{{ item }}'
+    dest:  '{{ app_config_dir }}/{{ item }}'
+    owner: '82'
+    group: '82'
+    mode:  0640
   loop:
     - uploadsize.conf
 
 - name: '{{ app_name }} | copy nginx.conf to {{ app_config_dir }}'
   template:
-    src:  "{{ item }}.j2"
-    dest: "{{ app_config_dir }}/{{ item }}"
-    owner: 82
-    group: 82
-    mode: 0640
+    src:   '{{ item }}.j2'
+    dest:  '{{ app_config_dir }}/{{ item }}'
+    owner: '82'
+    group: '82'
+    mode:  0640
   loop:
     - nginx.conf
 
