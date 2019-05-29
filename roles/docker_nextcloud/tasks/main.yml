@@ -27,7 +27,11 @@
 
 - name: '{{ app_name }} | docker collabora'
   include_tasks: collabora.yml
-  when: site_item.collabora
+  when: site_item.collabora|bool
+
+- name: '{{ app_name }} | docker onlyoffice'
+  include_tasks: onlyoffice.yml
+  when: site_item.onlyoffice|bool
 
 - name: '{{ app_name }} | docker nginx'
   include_tasks: nginx.yml
@@ -38,7 +42,7 @@
 
 - name: '{{ app_name }} | backup nextcloud'
   include_tasks: tasks/backup_script.yml
-  when: backup_enabled
+  when: backup_enabled|bool
 
 - name: '{{ app_name }} | clear app_passwd'
   set_fact: app_passwd=''
