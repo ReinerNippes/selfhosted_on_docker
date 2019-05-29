@@ -1,0 +1,14 @@
+---
+# tasks file to start onlyoffice container
+
+- name: '{{ app_name }} | Create the {{ app_name }} onlyoffice container'
+  docker_container:
+    name:                    '{{ app_name }}-onlyoffice'
+    image:                   'onlyoffice/documentserver:{{ app_onlyoffice_image | default("latest") }}'
+    restart_policy:          'unless-stopped'
+    networks:                [ name: '{{ app_name }}' ] 
+    purge_networks:          true
+    links:                   '{{ app_name }}'
+    networks_cli_compatible: true
+    labels:
+        com.centurylinklabs.watchtower.enable: '{{ app_collabora_watchtower }}'
