@@ -14,7 +14,7 @@
   - name: prepare backup
     include_role:
       name: prepare_backup
-    when: backup_enabled
+    when: backup_enabled|bool
 
   - name: setup all sites
     include_role:

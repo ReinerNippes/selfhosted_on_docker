@@ -43,14 +43,14 @@
 - name: docker portainer
   include_tasks: portainer.yml
   when: 
-    - portainer_enabled
+    - portainer_enabled|bool
 
 - name: docker adminer
   include_tasks: adminer.yml
   when: 
-    - adminer_enabled
+    - adminer_enabled|bool
 
 - name: docker postfix mail relay
   include_tasks: mailrelay.yml
   when: 
-    - mailrelay_enabled
+    - mailrelay_enabled|bool
