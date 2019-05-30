@@ -10,24 +10,31 @@ network_base_container:
 
 nextcloud_traefik_label:
   nginx:
-    traefik.enable:                        "false"
-    com.centurylinklabs.watchtower.enable: "true"
+    traefik.enable:                                   'false'
+    com.centurylinklabs.watchtower.enable:            '{{ app_watchtower }}'
   apache:
-    traefik.docker.network: "frontend"
-    traefik.enable:         "true"
-    traefik.frontend.rule:  "Host:{{ app_server_fqdn }}"
-    traefik.port:           "80"
-    traefik.protocol:       "http"
-    traefik.frontend.headers.referrerPolicy:          "no-referrer"
-    traefik.frontend.headers.SSLRedirect:             "true"
-    traefik.frontend.headers.STSSeconds:              "315360000"
-    traefik.frontend.headers.browserXSSFilter:        "true"
-    traefik.frontend.headers.contentTypeNosniff:      "true"
-    traefik.frontend.headers.forceSTSHeader:          "true"
-    traefik.frontend.headers.STSIncludeSubdomains:    "true"
-    traefik.frontend.headers.STSPreload:              "true"
-    traefik.frontend.headers.customFrameOptionsValue: "SAMEORIGIN"
-    com.centurylinklabs.watchtower.enable:            "true"
+    traefik.docker.network:                           'frontend'
+    traefik.enable:                                   'true'
+    traefik.frontend.rule:                            'Host:{{ app_server_fqdn }}'
+    traefik.port:                                     '80'
+    traefik.protocol:                                 'http'
+    traefik.frontend.headers.referrerPolicy:          'no-referrer'
+    traefik.frontend.headers.SSLRedirect:             'true'
+    traefik.frontend.headers.STSSeconds:              '315360000'
+    traefik.frontend.headers.browserXSSFilter:        'true'
+    traefik.frontend.headers.contentTypeNosniff:      'true'
+    traefik.frontend.headers.forceSTSHeader:          'true'
+    traefik.frontend.headers.STSIncludeSubdomains:    'true'
+    traefik.frontend.headers.STSPreload:              'true'
+    traefik.frontend.headers.customFrameOptionsValue: 'SAMEORIGIN'
+    com.centurylinklabs.watchtower.enable:            '{{ app_watchtower }}'
+
+app_docker_onlyoffice_vol:
+      - '{{ app_name }}-onlyoffice-data:/var/www/onlyoffice/Data:rw'
+      - '{{ app_name }}-onlyoffice-varlib:/var/lib/onlyoffice:rw'
+      - '{{ app_name }}-onlyoffice-postgresql:/var/lib/postgresql:rw'
+      - '{{ app_name }}-onlyoffice-logs:/var/log/onlyoffice:rw'
+      - '{{ app_name }}-onlyoffice-truetype:/usr/share/fonts/truetype/custom:rw'
 
 backup_script_block: |
     #    #
