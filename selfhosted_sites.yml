@@ -41,6 +41,7 @@ selfhosted_sites:
     server_fqdn: nextcloud.{{ base_domain }}
     collabora:   true
     collabora_dictionaries: "de_DE en_GB en_US es_ES fr_FR it nl pt_BR pt_PT ru"
+    onlyoffice:  true
     talk:        true
     talk_server: base.{{ base_domain }}
 
