@@ -2,7 +2,7 @@
 
 The following Apps are implemended:
 
-- Nextcloud + Collabora + Talk
+- Nextcloud + Collabora / OnlyOffice + Talk
 - Joomla
 - Wordpress
 - Drupal
@@ -146,6 +146,7 @@ If you want to install Collabora you can choice your dictionaries as well.
     server_fqdn: nextcloud.{{ base_domain }}
     collabora:   true
     collabora_dictionaries: "de_DE en_GB en_US es_ES fr_FR it nl pt_BR pt_PT ru"
+    onlyoffice:  true
     talk:        true
     talk_server: {{ base_domain }}
 ```
