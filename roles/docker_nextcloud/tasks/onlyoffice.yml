@@ -10,5 +10,6 @@
     purge_networks:          true
     links:                   '{{ app_name }}'
     networks_cli_compatible: true
+    volumes:                 '{{ app_docker_onlyoffice_vol }}'
     labels:
         com.centurylinklabs.watchtower.enable: '{{ app_collabora_watchtower }}'
