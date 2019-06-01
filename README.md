@@ -18,7 +18,7 @@ Right now this will run on Ubuntu 16/18, Debian 9, CentOS 7, Amazon Linux 2.
 
 The playbook runs on x86_64. It's tested on both architektures on AWS EC2 and Scaleway Server. Arm server are not yet tested. But may work.
 
-This is work in progress. Not everything is tested. Before you use this in production check the installation very carefully.
+> **WARNING**: This is work in progress. Not everything is tested. Before you use this in production check the installation very carefully.
 
 ## Preparation
 
