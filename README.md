@@ -22,17 +22,18 @@ This is work in progress. Not everything is tested. Before you use this in produ
 
 ## Preparation
 
+Install [Ansible](https://www.ansible.com/) and some needed tools by running the following command with a user that can sudo or is root. 
+
+```bash
+curl -s https://raw.githubusercontent.com/ReinerNippes/selfhosted_on_docker/master/prepare_ansible.sh | /bin/bash
+```
+
+
 Clone this repo and change into the directory `selfhosted_on_docker`.
 
 ```bash
 git clone https://github.com/ReinerNippes/selfhosted_on_docker
 cd selfhosted_on_docker
-```
-
-Install [Ansible](https://www.ansible.com/) and some needed tools by running the following command with a user that can sudo or is root.
-
-```bash
-./prepare_ansible.sh
 ```
 
 Note that root must have also sudo right otherwise the script will complain. Some hoster use distros where is is not in the sudoers file. In this case you have to add `root ALL=(ALL) NOPASSWD:ALL` to /etc/sudoers.
@@ -137,7 +138,7 @@ If you want to run several joomla installations just copy and change `name` and 
 
 ### Nextcloud is differnet
 
-Nextcloud has four additional variables. You can define if you want to install Collabora and/or Talk additional.
+Nextcloud has some additional variables. You can define if you want to install Collabora, OnlyOfiice and/or Talk additional.
 If you want to install Collabora you can choice your dictionaries as well.
 
 ```yaml
@@ -161,6 +162,7 @@ This a list of all available apps:
     server_fqdn: nextcloud.{{ base_domain }}
     collabora:   true
     collabora_dictionaries: "de_DE en_GB en_US es_ES fr_FR it nl pt_BR pt_PT ru"
+    onlyoffice:  true
     talk:        true
     talk_server: {{ base_domain }}
 
