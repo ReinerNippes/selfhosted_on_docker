@@ -2,7 +2,7 @@
 # Some common variables used in more then one roles
 
 docker_adminer_image:               'latest'
-docker_traefik_image:               'alpine'
+docker_traefik_image:               '1.7-alpine'
 docker_watchtower_image:            'latest'
 docker_watchtower_certdumper_image: 'latest'
 
