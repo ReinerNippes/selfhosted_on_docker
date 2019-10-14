@@ -41,7 +41,7 @@ Note that root must have also sudo right otherwise the script will complain. Som
 Prepare your OS to run the playook and install Docker on your server.
 
 ```bash
-./prepare_os.sh
+./prepare_os.yml
 ```
 
 You may skip this steps if you have already a running docker installation. Nevertheless you may miss some python packages. You have to install them manually.
