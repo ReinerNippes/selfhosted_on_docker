@@ -26,3 +26,16 @@
       traefik.enable:                         'false'
       com.centurylinklabs.watchtower.enable:  '{{ app_db_watchtower }}'
     state: 'started'
+
+- name: get db container IP address
+  command: "docker inspect --format '{''{ .NetworkSettings.Networks.{{ app_name }}.IPAddress }''}' {{ app_name }}-db"
+  register: db_ip_address
+  
+- name: wait for db container to become ready
+  wait_for:
+    host: "{{ db_ip_address.stdout }}"
+    port: "3306"
+    state: started
+    delay: 5
+    connect_timeout: 15
+    timeout: 30
