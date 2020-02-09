@@ -14,10 +14,14 @@
 - name: '{{ app_name }} | nextcloud network'
   include_tasks: tasks/network.yml
 
+- name: define db to create
+  set_fact: 
+    app_db_create_name: "{{ 'default' if (app_db_type == 'pgsql') else app_db_name }}"
+
 - name: '{{ app_name }} | docker database'
   include_tasks: create_app_{{ app_db_type }}_container.yml
   vars:
-    app_db_name: default
+    app_db_name: "{{ app_db_create_name }}"
 
 - name: '{{ app_name }} | docker redis'
   include_tasks: redis.yml
