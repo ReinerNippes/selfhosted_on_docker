@@ -73,13 +73,13 @@ selfhosted_mail_domain: '{{ base_domain }}'
 # Enable to backup your server
 backup_enabled: false
 
-# adminer is a webfront end for your database at https://{{ base_domain }}/adminer/
+# adminer is a webfront end for your database at https://base.{{ base_domain }}/adminer/
 adminer_enabled: false
 
-# portainer is a webfront end for docker host at https://{{ base_domain }}/portainer/
+# portainer is a webfront end for docker host at https://base.{{ base_domain }}/portainer/
 portainer_enabled: true
 
-# user for traefik dashboard at https://{{ base_domain }}/traefik/
+# user for traefik dashboard at https://base.{{ base_domain }}/traefik/
 traefik_api_enabled: false
 
 ```
@@ -94,10 +94,10 @@ Lets start with the base setup
 selfhosted_sites:
   - name: base
     type: base
-    server_fqdn: {{ base_domain }}
+    server_fqdn: base.{{ base_domain }}
 ```
 
-Don't edit or delete this. It's the base setup. It provides the basic container to run your apps. If you delete this the playbook will abort with an error.
+Don't edit or delete this. It's the base setup. It provides the basic container to run your apps. If you delete this the playbook will abort with an error. Of course you may change the `server_fqdn`. 
 
 ### Turnserver
 
