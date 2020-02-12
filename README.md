@@ -107,7 +107,7 @@ The server_fqdn must be the same as the base setup. Otherwise no certificates wi
 ```yaml
   - name: talk
     type: turnserver
-    server_fqdn: {{ base_domain }}
+    server_fqdn: base.{{ base_domain }}
 ```
 
 ### An app
