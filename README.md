@@ -10,6 +10,7 @@ The following Apps are implemended:
 - Grav
 - Rocket.Chat
 - Wallabag
+- Draw.io
 - Portainer
 - Adminer
 - restic & rclone Backup
@@ -189,6 +190,10 @@ This a list of all available apps:
   - name: wallabag
     type: wallabag
     server_fqdn: wallabag.{{ base_domain }}
+
+  - name: drawio
+    type: drawio
+    server_fqdn: drawio.{{ base_domain }}
 ```
 
 How many apps you can host on one machine depends on your machine and your users. Well. What else.
