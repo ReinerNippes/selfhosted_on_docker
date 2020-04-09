@@ -1,0 +1,8 @@
+---
+# drawio varibales
+
+# docker image version
+app_docker_image:                  'latest'
+
+# Enable/disable auto container updates via watchtower
+app_watchtower:                    'false'

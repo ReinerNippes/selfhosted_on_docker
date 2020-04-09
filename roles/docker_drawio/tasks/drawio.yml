@@ -1,0 +1,12 @@
+---
+# tasks file to start drawio container
+
+- name: '{{ app_name }} | create drawio container'
+  docker_container:
+    name:           '{{ app_name }}'
+    image:          'fjudith/draw.io:{{ app_docker_image }}'
+    restart_policy: 'unless-stopped'
+    networks:       [ name: '{{ app_name }}' ]
+    purge_networks: true
+    labels:         '{{ app_docker_labels }}'
+    state:          '{{ state | default("started") }}'
