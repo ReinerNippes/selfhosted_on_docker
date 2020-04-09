@@ -69,3 +69,6 @@ selfhosted_sites:
     type: wallabag
     server_fqdn: wallabag.{{ base_domain }}
     
+  - name: drawio
+    type: drawio
+    server_fqdn: drawio.{{ base_domain }}
